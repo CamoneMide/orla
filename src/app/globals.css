@@ -1,26 +1,668 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ---------------------------------------------------------------------------
+   Tokens measured from the original in a running browser at 1440x900 and
+   390x844. A measured number appears exactly once, here. If a component needs
+   an arbitrary value like text-[52px], the token is missing — add it instead.
+   --------------------------------------------------------------------------- */
+
+@theme {
+  /* Colour — ranked by painted area in the original */
+  --color-ground: #ffffff;
+  --color-ink: #262626;
+  --color-ink-2: #545454;
+  --color-ink-3: #6d6d6d;
+  --color-ink-4: #858585;
+  --color-warm: #f7f6f3;
+  --color-cool: #f7f7f7;
+  --color-faint: #f0f0f0;
+  --color-line: #eeeeee;
+  --color-line-2: #c6c6c6;
+  --color-hush: #d9d9d9;
+  --color-accent: #fffdbd;
+  --color-on-dark: #ffffff;
+  --color-on-dark-2: #ffffff8c;
+  --color-on-dark-3: #f7f6f3;
+
+  /* Type — fixed px, verified across both breakpoints. Not fluid. */
+  --text-mega: 130px;
+  --text-mega--line-height: 1.1;
+  --text-display: 110px;
+  --text-display--line-height: 1.04;
+  --text-display--letter-spacing: -0.06em;
+  --text-hundred: 100px;
+  --text-hundred--line-height: 1.1;
+  --text-title: 90px;
+  --text-title--line-height: 1.1;
+  --text-heading: 60px;
+  --text-heading--line-height: 1.1;
+  --text-heading--letter-spacing: -0.06em;
+  --text-subhead: 52px;
+  --text-subhead--line-height: 1.04;
+  --text-subhead--letter-spacing: -0.06em;
+  --text-lead: 48px;
+  --text-lead--line-height: 1.24;
+  --text-lead--letter-spacing: -0.05em;
+  --text-forty: 40px;
+  --text-forty--line-height: 1.1;
+  --text-32: 32px;
+  --text-32--line-height: 1.04;
+  --text-32--letter-spacing: -0.05em;
+  --text-24: 24px;
+  --text-24--line-height: 1.2;
+  --text-24--letter-spacing: -0.05em;
+  --text-22: 22px;
+  --text-22--line-height: 1.4;
+  --text-22--letter-spacing: -0.03em;
+  --text-20: 20px;
+  --text-20--line-height: 1.6;
+  --text-20--letter-spacing: -0.025em;
+  --text-18: 18px;
+  --text-18--line-height: 1.5;
+  --text-18--letter-spacing: -0.02em;
+  --text-16: 16px;
+  --text-16--line-height: 1.3;
+  --text-16--letter-spacing: -0.02em;
+  --text-14: 14px;
+  --text-14--line-height: 1.3;
+  --text-14--letter-spacing: -0.02em;
+  --text-12: 12px;
+  --text-12--line-height: 1;
+  --text-12--letter-spacing: -0.02em;
+  --text-10: 10px;
+  --text-10--line-height: 1.2;
+  --text-10--letter-spacing: 0.08em;
+  --text-7: 7px;
+  --text-7--line-height: 1;
+  --text-7--letter-spacing: -0.1em;
+
+  /* Families — three, exactly as the original ships three */
+  --font-display:
+    var(--font-dm-sans), "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-abel), "Abel", ui-sans-serif, system-ui, sans-serif;
+  --font-mono:
+    var(--font-fragment-mono), "Fragment Mono", ui-monospace, monospace;
+
+  /* Containers — two, both measured */
+  --container-page: 1280px;
+  --container-wide: 1392px;
+  --container-measure: 600px;
+  --container-narrow: 530px;
+
+  /* Spacing rhythm */
+  --spacing-gutter: 80px;
+  --spacing-gutter-wide: 24px;
+  --spacing-section: 160px;
+  --spacing-section-sm: 120px;
+
+  /* Radii */
+  --radius-xs: 2px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-xl: 18px;
+  --radius-pill: 24px;
+  --radius-block: 32px;
+  --radius-round: 999px;
+
+  /* Motion — the house curve is quint-out, and it carries everything */
+  --ease-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-clip: 0.35s;
+  --duration-move: 1.2s;
+  --duration-fade: 0.2s;
+
+  /* Elevation, taken verbatim from the original's card shadow */
+  --shadow-card:
+    rgba(0, 0, 0, 0.18) 0px 0.8px 0.8px -0.75px,
+    rgba(0, 0, 0, 0.18) 0.3px 2.18px 2.18px -1.5px,
+    rgba(0, 0, 0, 0.17) 1px 4.78px 4.78px -2.25px,
+    rgba(0, 0, 0, 0.14) 0px 10.62px 10.62px -3px,
+    rgba(0, 0, 0, 0.06) 0px 27px 27px -3.75px;
+  --shadow-pill: rgba(0, 0, 0, 0.3) 0px 11px 34px 0px;
+  /* The open FAQ item: the card stack at roughly half strength, plus a faint
+     upward layer so the top edge lifts off the page as well as the bottom. */
+  --shadow-accordion:
+    rgba(0, 0, 0, 0.05) 0px -2px 6px -1px,
+    rgba(0, 0, 0, 0.09) 0px 0.8px 0.8px -0.75px,
+    rgba(0, 0, 0, 0.09) 0.3px 2.18px 2.18px -1.5px,
+    rgba(0, 0, 0, 0.08) 1px 4.78px 4.78px -2.25px,
+    rgba(0, 0, 0, 0.06) 0px 10.62px 10.62px -3px,
+    rgba(0, 0, 0, 0.03) 0px 27px 27px -3.75px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* --------------------------------------------------------------------------- */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html {
+    background: var(--color-ground);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Tailwind v4's preflight puts buttons back on the default arrow. Anything
+     that responds to a click gets the hand; disabled controls keep the arrow.
+     In the base layer so a utility (cursor-text, cursor-default) still wins. */
+  a[href],
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  summary,
+  label[for],
+  select:not(:disabled),
+  input:is([type="checkbox"], [type="radio"], [type="submit"], [type="button"], [type="reset"], [type="file"], [type="range"], [type="color"]):not(:disabled) {
+    cursor: pointer;
+  }
+
+  body {
+    background: var(--color-ground);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-weight: 400;
+    overflow-x: clip;
+  }
+
+  /* The original sets everything in 400/500 and no heavier. Keep that axis. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 500;
+  }
+
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+    border-radius: 2px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* --- Layout utilities ------------------------------------------------------ */
+
+@utility container-page {
+  width: 100%;
+  max-width: calc(var(--container-page) + var(--spacing-gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--spacing-gutter-wide);
+}
+@media (width >= 900px) {
+  .container-page {
+    padding-inline: var(--spacing-gutter);
+  }
+}
+
+@utility container-wide {
+  width: 100%;
+  max-width: calc(var(--container-wide) + var(--spacing-gutter-wide) * 2);
+  margin-inline: auto;
+  padding-inline: var(--spacing-gutter-wide);
+}
+
+/* Section rhythm — 160px desktop, 80px below the fold on mobile */
+@utility section-y {
+  padding-block: 80px;
+}
+@media (width >= 900px) {
+  .section-y {
+    padding-block: var(--spacing-section);
+  }
+}
+
+/* --- Type utilities -------------------------------------------------------- */
+
+/* Uppercase Abel label, the workhorse of the original's small text */
+@utility label {
+  font-family: var(--font-body);
+  font-size: var(--text-14);
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--color-ink-2);
+}
+
+@utility micro {
+  font-family: var(--font-mono);
+  font-size: var(--text-10);
+  line-height: 1.2;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+}
+
+/* Display headings shrink at mobile — the original steps them down, it does
+   not scale them fluidly. */
+@utility h-display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 44px;
+  line-height: 1.04;
+  letter-spacing: -0.05em;
+}
+@media (width >= 900px) {
+  .h-display {
+    font-size: var(--text-display);
+    letter-spacing: -0.06em;
+  }
+}
+
+@utility h-section {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 38px;
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+}
+@media (width >= 900px) {
+  .h-section {
+    font-size: var(--text-heading);
+    letter-spacing: -0.06em;
+  }
+}
+
+@utility h-sub {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 30px;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+}
+@media (width >= 900px) {
+  .h-sub {
+    font-size: var(--text-subhead);
+    letter-spacing: -0.06em;
+  }
+}
+
+@utility h-card {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: var(--text-24);
+  line-height: 1.2;
+  letter-spacing: -0.05em;
+}
+@media (width >= 900px) {
+  .h-card {
+    font-size: var(--text-32);
+  }
+}
+
+/* Big Abel numerals, as used on every stat in the original */
+@utility numeral {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 72px;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+@media (width >= 900px) {
+  .numeral {
+    font-size: var(--text-hundred);
+  }
+}
+
+/* --- Motion ---------------------------------------------------------------- */
+
+/* Elements the reveal system will animate start hidden, but only once JS has
+   confirmed it is going to run. `js-ready` is set by a blocking script in
+   <head> so there is no flash of finished content before hydration. */
+.js-ready [data-reveal] {
+  opacity: 0;
+}
+.js-ready [data-reveal="up"] {
+  transform: translate3d(0, 24px, 0);
+}
+.js-ready [data-reveal="clip"] > * {
+  clip-path: inset(0 0 100% 0);
+}
+/* Left-to-right wipe: the window parked off to the left, its content parked
+   the same distance to the right (see .footer-mark-wipe). */
+.js-ready [data-reveal="wipe"] {
+  opacity: 1;
+  transform: translate3d(-100%, 0, 0);
+}
+.js-ready [data-reveal="wipe"] > * {
+  transform: translate3d(100%, 0, 0);
+}
+
+/* Hover roll (RollText). The original's buttons only lift, so this is ours,
+   built on the house curve. The incoming copy is a text-shadow exactly 1lh
+   down, so the mask, the shadow offset and the travel all share one length.
+   Delay is per unit: --i on the way in (left to right), --r on the way out
+   (right to left) — each rule's delay applies to the transition INTO that
+   state, which is what makes the leave a true reverse. */
+.roll {
+  --roll-d: 0.4s;
+  --roll-step: 20ms;
+  display: inline-block;
+  vertical-align: top;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.roll-u {
+  display: inline-block;
+  text-shadow: 0 1lh currentColor;
+  transition: transform var(--roll-d) var(--ease-quint);
+  transition-delay: calc(var(--r) * var(--roll-step));
+}
+.roll-words {
+  --roll-step: 40ms;
+}
+
+/* The chevron rides out to the right as its copy enters from the left. */
+.roll-icon {
+  position: relative;
+  overflow: hidden;
+}
+.roll-icon > svg {
+  position: absolute;
+  inset: 0;
+  transition: transform var(--roll-d, 0.6s) var(--ease-quint);
+}
+.roll-icon > svg + svg {
+  transform: translateX(-120%);
+}
+
+@media (hover: hover) {
+  .group:hover .roll-u {
+    transform: translateY(-1lh);
+    transition-delay: calc(var(--i) * var(--roll-step));
+  }
+  .group:hover .roll-icon > svg {
+    transform: translateX(120%);
+  }
+  .group:hover .roll-icon > svg + svg {
+    transform: none;
+  }
+}
+.group:focus-visible .roll-u {
+  transform: translateY(-1lh);
+  transition-delay: calc(var(--i) * var(--roll-step));
+}
+.group:focus-visible .roll-icon > svg {
+  transform: translateX(120%);
+}
+.group:focus-visible .roll-icon > svg + svg {
+  transform: none;
+}
+
+/* --- Footer mark ---------------------------------------------------------- */
+
+/*
+ * The stage the footer wordmark is drawn on: the band plus the padding and
+ * gutters around it, so nothing is clipped at the band's edge. Its mask is
+ * opaque across the whole band and fades out only across the bleed, which is
+ * where the blur's spill and the tops of the letters run, so the soft edges
+ * dissolve into the padding instead of stopping at a hard line.
+ */
+/*
+ * The reveal is a sliding window, not an animated clip-path. A clip-path
+ * changed every frame repaints everything under it, and under it are nine
+ * full-width copies of the word, eight of them blurred: measured on an Intel
+ * UHD 630 the old polygon wipe dropped 119 frames to 37 drawn, with raster
+ * tasks up to 29ms, and the late tiles read as the word vibrating.
+ *
+ * Here the window (.footer-mark-wipe, overflow hidden) slides in from the
+ * left while its child slides the other way by the same amount, so the word
+ * holds still and only the window's edge travels. The child is its own
+ * compositor layer: the word is rasterised once and both moves are
+ * transforms, which never repaint it.
+ */
+.footer-mark-wipe {
+  --bleed-y: 5rem; /* py-20 on the container */
+  --bleed-x: var(--spacing-gutter-wide);
+  position: absolute;
+  inset: calc(var(--bleed-y) * -1) calc(var(--bleed-x) * -1);
+  overflow: hidden;
+  pointer-events: none;
+}
+.footer-mark-wipe > div {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+.footer-mark-stage {
+  position: absolute;
+  inset: 0;
+  mask-image:
+    linear-gradient(
+      to bottom,
+      transparent 0,
+      #000 var(--bleed-y),
+      #000 calc(100% - var(--bleed-y)),
+      transparent 100%
+    ),
+    linear-gradient(
+      to right,
+      transparent 0,
+      #000 var(--bleed-x),
+      #000 calc(100% - var(--bleed-x)),
+      transparent 100%
+    );
+  mask-composite: intersect;
+}
+
+/*
+ * Progressive blur over the top and bottom of the wordmark, ramping from sharp
+ * to soft across the outer 0.15em of the band (about 30% of the letters'
+ * height, so the middle stays crisp) and holding at full strength through the
+ * bleed.
+ *
+ * Nine stacked copies of the word: the sharp one at the bottom, then eight
+ * with a rising blur radius. Each blurred copy is fully shown from its own
+ * point on the ramp out to the edge and fades in over the 0.01875em before
+ * it, so going outwards every copy cross-fades over the one beneath it. The
+ * strongest radius is ~0.14x the stem width, matched to the reference. Radii
+ * are in vw so they scale and cap with the band.
+ *
+ * Every copy sits on an opaque plate of the footer's ground. A copy with a
+ * transparent ground does not replace the one under it: its soft edge is
+ * partly transparent, so the sharp letter shows through its own halo, and
+ * where two partly transparent copies overlap the ink thins into stripes.
+ *
+ * `filter` on static copies, not `backdrop-filter` layers: a backdrop blur is
+ * re-sampled from whatever is behind it on every frame, so as the page scrolls
+ * by fractional pixels the result shifts and the word glitters. A filtered
+ * element is rasterised once and only composited after that.
+ */
+.footer-mark-layer {
+  position: absolute;
+  inset: 0;
+  background: var(--color-warm);
+}
+.footer-mark-layer:nth-child(2) {
+  mask-image: linear-gradient(
+    to bottom,
+    #000 calc(var(--bleed-y) + 0.13125em),
+    transparent calc(var(--bleed-y) + 0.15em),
+    transparent calc(100% - var(--bleed-y) - 0.15em),
+    #000 calc(100% - var(--bleed-y) - 0.13125em)
+  );
+}
+.footer-mark-layer:nth-child(2) > p {
+  filter: blur(min(0.036vw, 0.5px));
+}
+.footer-mark-layer:nth-child(3) {
+  mask-image: linear-gradient(
+    to bottom,
+    #000 calc(var(--bleed-y) + 0.1125em),
+    transparent calc(var(--bleed-y) + 0.13125em),
+    transparent calc(100% - var(--bleed-y) - 0.13125em),
+    #000 calc(100% - var(--bleed-y) - 0.1125em)
+  );
+}
+.footer-mark-layer:nth-child(3) > p {
+  filter: blur(min(0.072vw, 1px));
+}
+.footer-mark-layer:nth-child(4) {
+  mask-image: linear-gradient(
+    to bottom,
+    #000 calc(var(--bleed-y) + 0.09375em),
+    transparent calc(var(--bleed-y) + 0.1125em),
+    transparent calc(100% - var(--bleed-y) - 0.1125em),
+    #000 calc(100% - var(--bleed-y) - 0.09375em)
+  );
+}
+.footer-mark-layer:nth-child(4) > p {
+  filter: blur(min(0.129vw, 1.8px));
+}
+.footer-mark-layer:nth-child(5) {
+  mask-image: linear-gradient(
+    to bottom,
+    #000 calc(var(--bleed-y) + 0.075em),
+    transparent calc(var(--bleed-y) + 0.09375em),
+    transparent calc(100% - var(--bleed-y) - 0.09375em),
+    #000 calc(100% - var(--bleed-y) - 0.075em)
+  );
+}
+.footer-mark-layer:nth-child(5) > p {
+  filter: blur(min(0.201vw, 2.8px));
+}
+.footer-mark-layer:nth-child(6) {
+  mask-image: linear-gradient(
+    to bottom,
+    #000 calc(var(--bleed-y) + 0.05625em),
+    transparent calc(var(--bleed-y) + 0.075em),
+    transparent calc(100% - var(--bleed-y) - 0.075em),
+    #000 calc(100% - var(--bleed-y) - 0.05625em)
+  );
+}
+.footer-mark-layer:nth-child(6) > p {
+  filter: blur(min(0.302vw, 4.2px));
+}
+.footer-mark-layer:nth-child(7) {
+  mask-image: linear-gradient(
+    to bottom,
+    #000 calc(var(--bleed-y) + 0.0375em),
+    transparent calc(var(--bleed-y) + 0.05625em),
+    transparent calc(100% - var(--bleed-y) - 0.05625em),
+    #000 calc(100% - var(--bleed-y) - 0.0375em)
+  );
+}
+.footer-mark-layer:nth-child(7) > p {
+  filter: blur(min(0.431vw, 6px));
+}
+.footer-mark-layer:nth-child(8) {
+  mask-image: linear-gradient(
+    to bottom,
+    #000 calc(var(--bleed-y) + 0.01875em),
+    transparent calc(var(--bleed-y) + 0.0375em),
+    transparent calc(100% - var(--bleed-y) - 0.0375em),
+    #000 calc(100% - var(--bleed-y) - 0.01875em)
+  );
+}
+.footer-mark-layer:nth-child(8) > p {
+  filter: blur(min(0.603vw, 8.4px));
+}
+.footer-mark-layer:nth-child(9) {
+  mask-image: linear-gradient(
+    to bottom,
+    #000 var(--bleed-y),
+    transparent calc(var(--bleed-y) + 0.01875em),
+    transparent calc(100% - var(--bleed-y) - 0.01875em),
+    #000 calc(100% - var(--bleed-y))
+  );
+}
+.footer-mark-layer:nth-child(9) > p {
+  filter: blur(min(0.805vw, 11.2px));
+}
+
+/* --- Page curtain (PageCurtain.tsx) -------------------------------------- */
+
+/* Hidden and inert at rest. The intro state is shown by CSS rather than by the
+   component, so the curtain is already over the page on the first paint —
+   and only under `js-ready`, so with scripts off or under ?ready=1 it never
+   appears at all. */
+.curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 60; /* over the nav pill (z-50) */
+  visibility: hidden;
+  pointer-events: none;
+}
+.js-ready .curtain.is-intro {
+  visibility: visible;
+  pointer-events: auto;
+}
+.curtain-warm,
+.curtain-dark {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding-inline: 24px;
+  text-align: center;
+}
+.curtain-warm {
+  background: var(--color-warm);
+}
+.curtain:not(.is-intro) .curtain-warm {
+  display: none;
+}
+.curtain-dark {
+  /* background: var(--color-ink); */
+  background: #131313;
+  clip-path: inset(0% 0% 100% 0%);
+}
+/* One-line mask, as on the buttons' roll. The bottom padding keeps
+   descenders inside it (p in "updates", y in "company"). */
+.curtain-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.1em;
+  white-space: pre;
+}
+.curtain-warm .curtain-mask + .curtain-mask {
+  margin-left: 0.25em;
+}
+.curtain-u {
+  display: inline-block;
+  transform: translateY(110%);
+}
+
+/* --- Reduced motion -------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .js-ready [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+  .js-ready [data-reveal="clip"] > * {
+    clip-path: none;
+  }
+  .js-ready [data-reveal="wipe"],
+  .js-ready [data-reveal="wipe"] > * {
+    transform: none;
+  }
+
+  /* The blanket rule below zeroes duration but not delay, so a roll would
+     still step glyph by glyph. Hold every unit at rest instead. */
+  .roll-u,
+  .roll-icon > svg {
+    transform: none !important;
+  }
+  .roll-icon > svg + svg {
+    display: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Hide scrollbars on the horizontal rails, as the original does */
+@utility no-bar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-bar::-webkit-scrollbar {
+  display: none;
 }

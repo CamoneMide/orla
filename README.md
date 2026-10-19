@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Orla
 
-## Getting Started
+A launch site for Orla, a cordless, presence-aware home lamp. Front-end only:
+the forms validate and confirm, but nothing is sent or stored, and nothing is
+for sale.
 
-First, run the development server:
+Live at **https://orla.vercel.app**.
+
+## Stack
+
+Next.js 16 (App Router, TypeScript), Tailwind CSS v4, GSAP + ScrollTrigger
+with Lenis smooth scrolling, Motion (lazy-loaded), Zustand and TanStack Query.
+Every route is prerendered as static HTML.
+
+## Run it
+
+Requires Node 20.9 or later and pnpm.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
+pnpm dev       # http://localhost:3000
+pnpm build     # production build
+pnpm start     # serve the production build
+pnpm lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`?ready=1` on any URL renders the page at rest — no intro curtain, no reveals,
+no parallax — as does the system's reduced-motion setting.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Where things live
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Path | What |
+|---|---|
+| `src/config/product.ts` | Everything product-specific: name, URL, contact, launch date, prices |
+| `src/content/*.ts` | All page copy, in the same shapes the components read |
+| `src/components/` | Sections, chrome (nav, footer), UI pieces, system (curtain, scrolling) |
+| `public/orla-product-images/` | Every photograph, one WebP per image key |
 
-## Learn More
+Components hold no copy. To point the site at a different product, edit
+`product.ts`, rewrite `src/content/*` at the same shapes, and replace the
+photographs under the same keys.
 
-To learn more about Next.js, take a look at the following resources:
+## Images
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Drop a JPEG or PNG into `public/orla-product-images/` named after its key and
+run:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+pnpm images          # convert to WebP, delete the original once it passes
+pnpm images --keep   # convert, keep the original
+```
 
-## Deploy on Vercel
+The script keeps full resolution, checks each result against the original
+(at least 40 dB PSNR, stepping quality up where needed) and only deletes the
+original once it passes. Pages crop with `object-fit: cover`, so keep the
+subject centred.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Launch countdown
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The nav panel and the waitlist page count down to `launch.date` in
+`product.ts`. Once that date passes, the countdown disappears and its label
+switches to `launch.afterLabel`.
